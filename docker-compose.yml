@@ -1,0 +1,28 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
+version: '3.4'
+
+services:
+  ms-sql-server:
+    image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+    environment:
+        ACCEPT_EULA: "Y"
+        SA_PASSWORD: "149024As"
+        MSSQL_PID: Express
+    ports:
+        - "1433:1433"
+  redis:
+   image: redis
+   container_name: rediscache
+   ports:
+    -   "6379:6379"
+  wisecrm:
+    image: acrcrm.azurecr.io/wisecrm
+    build:
+      context: .
+      dockerfile: WiseCRM/Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - ms-sql-server
+      - redis
